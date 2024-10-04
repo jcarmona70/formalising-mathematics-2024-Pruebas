@@ -1,3 +1,9 @@
+# Mis pruebas
+
+Este es mi repositorio con pruebas sobre lean4, tomo como base el repositorio del curso de Buzzar porque es un buen punto de inicio con muchos recursos.
+
+
+
 # Formalising Mathematics
 
 This is the repository for Kevin Buzzard's 2024 course on formalising mathematics in the Lean theorem prover. The course ran from January to March 2024. 
