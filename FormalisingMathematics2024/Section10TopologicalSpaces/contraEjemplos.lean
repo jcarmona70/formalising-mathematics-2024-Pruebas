@@ -144,3 +144,12 @@ def Sorgenfrey : TopologicalSpace ℝ where
     apply s_sub
     apply hδ.right
     exact hy
+
+
+
+structure Neighborhood_system (X: Type) where
+  Neighborhood_set : X → Set (Set X)
+  x_in_Neighborhood : ∀ (x:X)  {N:Set X}, (N ∈ (Neighborhood_set x)) → (x ∈ N)
+  Neighborhood_inter : ∀ (x:X) {N M:Set X}, (N ∈ (Neighborhood_set x)) → (M ∈ (Neighborhood_set x)) → (N ∩ M ∈ (Neighborhood_set x))
+  Neighborhood_superset : ∀ (x:X) {N M:Set X},  (N ∈ (Neighborhood_set x)) → (N ⊆ M) → (M ∈ (Neighborhood_set x))
+  Neigborhood_of_neighborhood : ∀ (x:X) {N: Set X}, (N ∈ (Neighborhood_set x)) → (∃ (M:Set X), (M ∈ (Neighborhood_set x)) ∧ ∀ y ∈ (N ∈ (Neighborhood_set y)))

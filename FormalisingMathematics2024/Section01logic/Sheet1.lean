@@ -144,8 +144,9 @@ example : P → Q → P := by
 /-- If we know `P`, and we also know `P → Q`, we can deduce `Q`.
 This is called "Modus Ponens" by logicians. -/
 example : P → (P → Q) → Q := by
-  sorry
-  done
+  intro hP
+  intro hPQ
+  exact hPQ hP
 
 /-- `→` is transitive. That is, if `P → Q` and `Q → R` are true, then
   so is `P → R`. -/
@@ -195,3 +196,7 @@ example :
       ((((P → P) → Q) → P → P → Q) → R) → (((P → P → Q) → (P → P) → Q) → R) → R := by
   sorry
   done
+
+theorem  facil: P → P:= by
+  intro h
+  exact h
