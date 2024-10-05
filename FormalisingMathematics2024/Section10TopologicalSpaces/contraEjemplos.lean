@@ -152,4 +152,36 @@ structure Neighborhood_system (X: Type) where
   x_in_Neighborhood : ∀ (x:X)  {N:Set X}, (N ∈ (Neighborhood_set x)) → (x ∈ N)
   Neighborhood_inter : ∀ (x:X) {N M:Set X}, (N ∈ (Neighborhood_set x)) → (M ∈ (Neighborhood_set x)) → (N ∩ M ∈ (Neighborhood_set x))
   Neighborhood_superset : ∀ (x:X) {N M:Set X},  (N ∈ (Neighborhood_set x)) → (N ⊆ M) → (M ∈ (Neighborhood_set x))
-  Neigborhood_of_neighborhood : ∀ (x:X) {N: Set X}, (N ∈ (Neighborhood_set x)) → (∃ (M:Set X), (M ∈ (Neighborhood_set x)) ∧ ∀ y ∈ (N ∈ (Neighborhood_set y)))
+  Neigborhood_of_neighborhood : ∀ (x:X) {N: Set X}, (N ∈ (Neighborhood_set x)) → (∃ M ∈ (Neighborhood_set x), ∀ y ∈ M, (N ∈ (Neighborhood_set y)))
+  total_set_is_neigborhood : ∀ (x:X), Set.univ ∈ (Neighborhood_set x)
+#print Neighborhood_system
+
+def topology_by_Neigborhoods {X:Type} (NS: Neighborhood_system X) : TopologicalSpace X where
+  IsOpen (s:Set X) := ∀ x ∈ s, ∃ N ∈ NS.Neighborhood_set x, N ⊆ s
+  isOpen_univ:= by
+    intro x hx
+    have total := NS.total_set_is_neigborhood x
+    use Set.univ
+
+
+  isOpen_inter := by
+    intros s t hs ht x hst
+
+    obtain ⟨Ns, hNs, hNs'⟩ := hs x hx.left
+    obtain ⟨Nt, hNt, hNt'⟩ := ht x hx.right
+    obtain ⟨N, hN, hN'⟩ := N.Neighborhood_inter x hNs hNt
+    use N
+    exact hN
+    exact Set.inter_subset_inter hNs' hNt'
+  isOpen_sUnion := by
+    intro F
+    intro hF
+    intro x hx
+    obtain ⟨s, hs⟩ := hx
+    have hs1:=hs.left
+    have hx1:=hs.right
+    have p:=hF s hs1 x hx1
+    obtain ⟨N, hN, hN'⟩ := p
+    use N
+    exact hN
+    exact hN'
