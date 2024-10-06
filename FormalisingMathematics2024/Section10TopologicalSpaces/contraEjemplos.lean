@@ -262,13 +262,45 @@ def Neigborhoods_by_topology {X:Type} (T: TopologicalSpace X) : Neighborhood_sys
     exact hUN.left
     constructor
     exact hUN.right.left
+    intro x
+    intro hx
+    exact hx
+    intro y
+    intro hy
+    use UN
+    constructor
+    exact hUN.left
+    constructor
+    exact hy
+    exact hUN.right.right
 
 
 
   total_set_is_neigborhood := by
     intro x
-    have h:=T.isOpen_univ x
     use Set.univ
     constructor
-    exact h
-    exact Set.mem_univ x
+    exact T.isOpen_univ
+    constructor
+    trivial
+    exact Set.subset_univ Set.univ
+
+
+def equiv_neighborhoods_system_open_sets {X:Type} (T: TopologicalSpace X):topology_by_Neigborhoods (Neigborhoods_by_topology T) = T := by
+  apply TopologicalSpace.ext
+  ext s
+  constructor
+  intro hs
+  have otra_forma:∀ x ∈ s, ∃  U:Set X,  ( T.IsOpen U) ∧ x ∈ U ∧ U ⊆ s := by
+    intros x hx
+    have hs1:= hs x hx
+    obtain ⟨N, hN, hN'⟩ := hs1
+    obtain ⟨U, hU⟩ := hN
+    use U
+    constructor
+    exact hU.left
+    constructor
+    exact hU.right.left
+    intro y
+    intro hy
+    exact hN' (hU.right.right hy)
