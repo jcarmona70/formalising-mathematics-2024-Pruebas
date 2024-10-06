@@ -196,3 +196,79 @@ def topology_by_Neigborhoods {X:Type} (NS: Neighborhood_system X) : TopologicalS
     exact hs1
     apply hN'
     exact hy
+
+#print Neighborhood_system.Neighborhood_set
+
+def Neigborhoods_by_topology {X:Type} (T: TopologicalSpace X) : Neighborhood_system X where
+  Neighborhood_set := by
+     intro x
+     exact {N | ∃ U , (T.IsOpen U) ∧  (x ∈ U)  ∧ (U ⊆ N)}
+
+
+  x_in_Neighborhood := by
+    intro x
+    intro N
+    intro hN
+    obtain ⟨U, hU⟩ := hN
+    exact hU.right.right hU.right.left
+
+  Neighborhood_inter := by
+    intro x
+    intro N
+    intro M
+    intro hN
+    intro hM
+    obtain ⟨UN, hUN⟩ := hN
+    obtain ⟨UM, hUM⟩ := hM
+    use UN ∩ UM
+    constructor
+    exact T.isOpen_inter UN UM hUN.left hUM.left
+    constructor
+    constructor
+    exact hUN.right.left
+    exact hUM.right.left
+    exact Set.inter_subset_inter hUN.right.right hUM.right.right
+
+
+  Neighborhood_superset := by
+    intro x
+    intro N
+    intro M
+    intro hN
+    intro hNM
+    obtain ⟨UN, hUN⟩ := hN
+    use UN
+    constructor
+    exact hUN.left
+    constructor
+    exact hUN.right.left
+    intro elem
+    intro h
+    apply hNM
+    exact hUN.right.right h
+
+
+
+
+  Neigborhood_of_neighborhood := by
+    intro x
+    intro N
+    intro hN
+    obtain ⟨UN, hUN⟩ := hN
+    use UN
+    constructor
+    use UN
+    constructor
+    exact hUN.left
+    constructor
+    exact hUN.right.left
+
+
+
+  total_set_is_neigborhood := by
+    intro x
+    have h:=T.isOpen_univ x
+    use Set.univ
+    constructor
+    exact h
+    exact Set.mem_univ x
