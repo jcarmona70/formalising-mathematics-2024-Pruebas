@@ -290,7 +290,8 @@ def equiv_neighborhoods_system_open_sets {X:Type} (T: TopologicalSpace X):topolo
   apply TopologicalSpace.ext
   ext s
   constructor
-  intro hs
+  intro op
+
   have otra_forma:∀ x:s, ∃  U:Set X,  ( T.IsOpen U) ∧ x.val ∈ U ∧ U ⊆ s := by
     intros x
 
@@ -321,8 +322,10 @@ def equiv_neighborhoods_system_open_sets {X:Type} (T: TopologicalSpace X):topolo
     constructor
     use ⟨x,hx⟩
     exact h
-  have hFU1: ∀ (x : ↑s), TopologicalSpace.IsOpen (FU x):= by
+
+  have hFU1: ∀ x ∈  s, TopologicalSpace.IsOpen (FU x):= by
     intro x
-    exact (hFU x).left
+    exact (hFU  ↑x).left
+
   have hFU2: T.IsOpen (Set.iUnion FU) := by
-        exact T.isOpen_sUnion Set.range FU hFU1
+        exact T.isOpen_sUnion (Set.range FU) hFU1
