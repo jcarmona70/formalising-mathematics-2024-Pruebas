@@ -291,8 +291,9 @@ def equiv_neighborhoods_system_open_sets {X:Type} (T: TopologicalSpace X):topolo
   ext s
   constructor
   intro hs
-  have otra_forma:∀ x ∈ s, ∃  U:Set X,  ( T.IsOpen U) ∧ x ∈ U ∧ U ⊆ s := by
-    intros x hx
+  have otra_forma:∀ x:s, ∃  U:Set X,  ( T.IsOpen U) ∧ x.val ∈ U ∧ U ⊆ s := by
+    intros x
+
     have hs1:= hs x hx
     obtain ⟨N, hN, hN'⟩ := hs1
     obtain ⟨U, hU⟩ := hN
@@ -304,3 +305,24 @@ def equiv_neighborhoods_system_open_sets {X:Type} (T: TopologicalSpace X):topolo
     intro y
     intro hy
     exact hN' (hU.right.right hy)
+
+  choose FU hFU using otra_forma
+  have sub1:Set.iUnion FU ⊆ s := by
+    intro x
+    intro hx
+    obtain ⟨U, hU, hU'⟩ := hx
+    obtain ⟨y, hy, hy'⟩ := hU
+    exact (hFU y).right.right hU'
+  have sub2 : s ⊆ Set.iUnion FU := by
+    intro x
+    intro hx
+    have h:= (hFU ⟨x,hx⟩).right.left
+    use FU ⟨x,hx⟩
+    constructor
+    use ⟨x,hx⟩
+    exact h
+  have hFU1: ∀ (x : ↑s), TopologicalSpace.IsOpen (FU x):= by
+    intro x
+    exact (hFU x).left
+  have hFU2: T.IsOpen (Set.iUnion FU) := by
+        exact T.isOpen_sUnion Set.range FU hFU1
