@@ -291,41 +291,47 @@ def equiv_neighborhoods_system_open_sets {X:Type} (T: TopologicalSpace X):topolo
   ext s
   constructor
   intro op
+  have hLocal:∀ x ∈ s , ∃ N ∈ (Neigborhoods_by_topology T).Neighborhood_set x, N ⊆ s ∧ x ∈ N:= by
+    intros x hx
+    have casi:= op x hx
+    obtain ⟨N, hN, hN'⟩ := casi
+    use N
+    constructor
+    exact hN
+    constructor
+    exact hN'
+    exact (Neigborhoods_by_topology T).x_in_Neighborhood x hN
 
-  have otra_forma:∀ x:s, ∃  U:Set X,  ( T.IsOpen U) ∧ x.val ∈ U ∧ U ⊆ s := by
-    intros x
+  have hLocal1:∀ x:s , (∃ U:Set X, (T.IsOpen U) ∧ (x.val  ∈ U) ∧ (U ⊆ s)) := by
 
-    have hs1:= hs x hx
-    obtain ⟨N, hN, hN'⟩ := hs1
+
+    intro x
+    have hx:= x.property
+    have hLocal:= hLocal x.val hx
+    obtain ⟨N, hN, hN'⟩ := hLocal
     obtain ⟨U, hU⟩ := hN
     use U
     constructor
     exact hU.left
     constructor
     exact hU.right.left
-    intro y
-    intro hy
-    exact hN' (hU.right.right hy)
+    intro yintro hy
+    exact hN'.left (hU.right.right hy)
+  choose U hU using hLocal1
 
-  choose FU hFU using otra_forma
-  have sub1:Set.iUnion FU ⊆ s := by
-    intro x
-    intro hx
-    obtain ⟨U, hU, hU'⟩ := hx
-    obtain ⟨y, hy, hy'⟩ := hU
-    exact (hFU y).right.right hU'
-  have sub2 : s ⊆ Set.iUnion FU := by
-    intro x
-    intro hx
-    have h:= (hFU ⟨x,hx⟩).right.left
-    use FU ⟨x,hx⟩
+  have hUnion:(s = ⋃ x:s, U x):= by
+    ext y
     constructor
-    use ⟨x,hx⟩
-    exact h
-
-  have hFU1: ∀ x ∈  s, TopologicalSpace.IsOpen (FU x):= by
+    intro hy
+    rw [Set.mem_iUnion]
+    use ⟨y,hy⟩
+    exact  (hU ⟨y,hy⟩).right.left
+    intro hy
+    rw [Set.mem_iUnion] at hy
+    obtain ⟨y', hy'⟩ := hy
+    exact (hU y').right.right hy'
+  have abiertos:∀ x:s, T.IsOpen (U x) := by
     intro x
-    exact (hFU  ↑x).left
-
-  have hFU2: T.IsOpen (Set.iUnion FU) := by
-        exact T.isOpen_sUnion (Set.range FU) hFU1
+    exact (hU x).left
+  have abiert_union:T.IsOpen (⋃ x:s,U x):= by
+    exact T.isOpen_sUnion  {U x | x:s } abiertos
