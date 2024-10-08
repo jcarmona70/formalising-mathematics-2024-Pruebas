@@ -2,76 +2,6 @@ import Mathlib.Tactic
 
 open TopologicalSpace
 
-variable (X Y : Type) [TopologicalSpace X] [TopologicalSpace Y]
-
--- S es un subconjunto de X
-variable (S : Set X)
-
--- `f : X → Y` es una función
-variable (f : X → Y)
-
-
-example (hf : Continuous f) (hS : IsCompact S) : IsCompact (f '' S) := by
-  rw [isCompact_iff_finite_subcover] at *
-  intros τ U hU hUS
-
-
-  have ig:(f ⁻¹' (⋃ (i:τ), (U i))) = (⋃ (i:τ), (f ⁻¹' (U i)))  := by
-    rw [Set.preimage_iUnion]
-
-  have S_cont: S ⊆  (⋃ (i:τ), (f ⁻¹' (U i))) := by
-    rw [← ig]
-    rw [← Set.image_subset_iff]
-    exact hUS
-
-  -- Lo mismo que antes pero S_cont se sigue llamando hUS
-  -- rw [Set.image_subset_iff,Set.preimage_iUnion] at hUS
-
-
-
-  have existe:=hS (fun i => f ⁻¹' (U i)) (fun i => hf.isOpen_preimage (U i) (hU i)) S_cont
-  obtain ⟨t, ht⟩ := existe
-  use t
-  rw [Set.image_subset_iff]
-  have ig: (⋃ i ∈ t, (fun i ↦ f ⁻¹' U i) i) = (⋃ i ∈ t, f ⁻¹' U i) := by
-    rfl
-  rw [ig] at ht
-  rw [← Set.preimage_iUnion₂] at ht
-
-  -- have ig2: (⋃ i ∈ t, f ⁻¹' U i) = f ⁻¹' (⋃ i ∈ t, U i) := by
-  --  rw [← Set.preimage_iUnion₂]
-  --  rw [ig2] at ht
-  -- rw [← Set.preimage_iUnion₂]
-  exact ht
-  done
-
-example (hf : Continuous f) (hS : IsCompact S) : IsCompact (f '' S) := by
-  rw [isCompact_iff_finite_subcover] at *
-  intros τ U hU hUS
-
-
-  have ig:(f ⁻¹' (⋃ (i:τ), (U i))) = (⋃ (i:τ), (f ⁻¹' (U i)))  := by
-    rw [Set.preimage_iUnion]
-
-  have S_cont: S ⊆  (⋃ (i:τ), (f ⁻¹' (U i))) := by
-    rw [← ig]
-    rw [← Set.image_subset_iff]
-    exact hUS
-
-  -- Lo mismo que antes pero S_cont se sigue llamando hUS
-  -- rw [Set.image_subset_iff,Set.preimage_iUnion] at hUS
-  -- no funciona ¿??¿?
-
-
-
-  have existe:=hS (fun i => f ⁻¹' (U i)) (fun i => hf.isOpen_preimage (U i) (hU i)) S_cont
-  obtain ⟨t, ht⟩ := existe
-  use t
-
-  simp only [Set.image_subset_iff, Set.preimage_iUnion₂]
-  exact ht
-  done
-
 
 
 def Sorgenfrey : TopologicalSpace ℝ where
@@ -286,7 +216,7 @@ def Neigborhoods_by_topology {X:Type} (T: TopologicalSpace X) : Neighborhood_sys
     exact Set.subset_univ Set.univ
 
 
-def equiv_neighborhoods_system_open_sets {X:Type} (T: TopologicalSpace X):topology_by_Neigborhoods (Neigborhoods_by_topology T) = T := by
+theorem equiv_neighborhoods_system_open_sets {X:Type} (T: TopologicalSpace X):topology_by_Neigborhoods (Neigborhoods_by_topology T) = T := by
   apply TopologicalSpace.ext
   ext s
   constructor
@@ -330,8 +260,106 @@ def equiv_neighborhoods_system_open_sets {X:Type} (T: TopologicalSpace X):topolo
     rw [Set.mem_iUnion] at hy
     obtain ⟨y', hy'⟩ := hy
     exact (hU y').right.right hy'
-  have abiertos:∀ x:s, T.IsOpen (U x) := by
-    intro x
-    exact (hU x).left
+
+  have abiertos:∀ t ∈ {x | ∃ x_1, U x_1 = x}, TopologicalSpace.IsOpen t:= by
+    intro t
+    intro ht
+    obtain ⟨x1, hx1⟩ := ht
+    rw [← hx1]
+    exact (hU x1).left
+
   have abiert_union:T.IsOpen (⋃ x:s,U x):= by
     exact T.isOpen_sUnion  {U x | x:s } abiertos
+  rw [hUnion]
+  exact abiert_union
+
+  intro s_abiertoT
+  intro x hx
+  use s
+  constructor
+  use s
+  constructor
+  exact s_abiertoT
+  constructor
+  exact hx
+  exact Eq.subset rfl
+  exact Eq.subset rfl
+  done
+
+theorem  equiv_open_sets_neighborhoods_system {X:Type} (N: Neighborhood_system X):(Neigborhoods_by_topology  (topology_by_Neigborhoods  N )) = N := by
+
+
+
+
+
+
+
+variable (X Y : Type) [TopologicalSpace X] [TopologicalSpace Y]
+
+-- S es un subconjunto de X
+variable (S : Set X)
+
+-- `f : X → Y` es una función
+variable (f : X → Y)
+
+
+example (hf : Continuous f) (hS : IsCompact S) : IsCompact (f '' S) := by
+  rw [isCompact_iff_finite_subcover] at *
+  intros τ U hU hUS
+
+
+  have ig:(f ⁻¹' (⋃ (i:τ), (U i))) = (⋃ (i:τ), (f ⁻¹' (U i)))  := by
+    rw [Set.preimage_iUnion]
+
+  have S_cont: S ⊆  (⋃ (i:τ), (f ⁻¹' (U i))) := by
+    rw [← ig]
+    rw [← Set.image_subset_iff]
+    exact hUS
+
+  -- Lo mismo que antes pero S_cont se sigue llamando hUS
+  -- rw [Set.image_subset_iff,Set.preimage_iUnion] at hUS
+
+
+
+  have existe:=hS (fun i => f ⁻¹' (U i)) (fun i => hf.isOpen_preimage (U i) (hU i)) S_cont
+  obtain ⟨t, ht⟩ := existe
+  use t
+  rw [Set.image_subset_iff]
+  have ig: (⋃ i ∈ t, (fun i ↦ f ⁻¹' U i) i) = (⋃ i ∈ t, f ⁻¹' U i) := by
+    rfl
+  rw [ig] at ht
+  rw [← Set.preimage_iUnion₂] at ht
+
+  -- have ig2: (⋃ i ∈ t, f ⁻¹' U i) = f ⁻¹' (⋃ i ∈ t, U i) := by
+  --  rw [← Set.preimage_iUnion₂]
+  --  rw [ig2] at ht
+  -- rw [← Set.preimage_iUnion₂]
+  exact ht
+  done
+
+example (hf : Continuous f) (hS : IsCompact S) : IsCompact (f '' S) := by
+  rw [isCompact_iff_finite_subcover] at *
+  intros τ U hU hUS
+
+
+  have ig:(f ⁻¹' (⋃ (i:τ), (U i))) = (⋃ (i:τ), (f ⁻¹' (U i)))  := by
+    rw [Set.preimage_iUnion]
+
+  have S_cont: S ⊆  (⋃ (i:τ), (f ⁻¹' (U i))) := by
+    rw [← ig]
+    rw [← Set.image_subset_iff]
+    exact hUS
+
+  -- Lo mismo que antes pero S_cont se sigue llamando hUS
+  -- rw [Set.image_subset_iff,Set.preimage_iUnion] at hUS
+  -- no funciona ¿??¿?
+
+
+
+  have existe:=hS (fun i => f ⁻¹' (U i)) (fun i => hf.isOpen_preimage (U i) (hU i)) S_cont
+  obtain ⟨t, ht⟩ := existe
+  use t
+
+  simp only [Set.image_subset_iff, Set.preimage_iUnion₂]
+  exact ht
+  done
