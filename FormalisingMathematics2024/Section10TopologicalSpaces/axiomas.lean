@@ -31,3 +31,27 @@ lemma my_or.elim (P Q R:Prop):my_or P Q → (P → R) → (Q → R) → R := by
   intro hpr
   intro hqr
 #print prefix Or
+
+axiom A:Type
+axiom my_true:Prop
+axiom my_trivial:my_true
+axiom cosa:A
+axiom cosa_de_cosa:cosa
+axiom una_prop:Prop
+axiom demo_de_una_prop:una_prop
+axiom orden_sup:Type 1
+#check orden_sup
+axiom b:orden_sup
+#check b
+axiom c:b
+
+#check my_trivial
+
+
+#check Prop
+#check Sort 0
+#check A
+
+#print my_not
+
+#print prefix And

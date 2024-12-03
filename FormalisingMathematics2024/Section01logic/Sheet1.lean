@@ -57,7 +57,7 @@ letters like `P`, `Q`, `R` denote propositions
 with `h` like `h1` or `hP` are proofs or hypotheses.
 
 -/
-
+#print prefix And
 -- Throughout this sheet, `P`, `Q` and `R` will denote propositions.
 variable (P Q R : Prop)
 
