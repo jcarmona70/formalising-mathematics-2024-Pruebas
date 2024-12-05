@@ -83,13 +83,17 @@ example : A ⊆ A := by sorry
 
 example : A ⊆ B → B ⊆ C → A ⊆ C := by sorry
 
-example : A ⊆ A ∪ B := by sorry
+example : A ⊆ A ∪ B := by
+     exact Set.subset_union_left A B
+
+#print Set.subset_union_left
 
 example : A ∩ B ⊆ A := by sorry
 
 example : A ⊆ B → A ⊆ C → A ⊆ B ∩ C := by sorry
 
-example : B ⊆ A → C ⊆ A → B ∪ C ⊆ A := by sorry
+example : B ⊆ A → C ⊆ A → B ∪ C ⊆ A := by
+    exact fun a a_1 ↦ Set.union_subset a a_1
 
 example : A ⊆ B → C ⊆ D → A ∪ C ⊆ B ∪ D := by sorry
 

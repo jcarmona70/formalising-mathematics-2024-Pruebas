@@ -287,6 +287,7 @@ theorem equiv_neighborhoods_system_open_sets {X:Type} (T: TopologicalSpace X):to
   done
 
 theorem  equiv_open_sets_neighborhoods_system {X:Type} (N: Neighborhood_system X):(Neigborhoods_by_topology  (topology_by_Neigborhoods  N )) = N := by
+  library_search
 
 
 
